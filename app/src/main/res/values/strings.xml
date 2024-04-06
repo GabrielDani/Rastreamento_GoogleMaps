@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Maps</string>
+    <string name="latitude">Latitude: </string>
+    <string name="longitude">Longitude: </string>
+    <string name="adicionar_regiao">Adicionar Região</string>
+    <string name="gravar_no_bd">Gravar no BD</string>
+</resources>
