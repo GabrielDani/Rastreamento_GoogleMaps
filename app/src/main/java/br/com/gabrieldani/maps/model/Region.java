@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.gabrieldani.locationutils.DistanceCalculator;
+
 public class Region {
     private String name;
     private double latitude;
@@ -20,14 +22,15 @@ public class Region {
     public Region() {
         // Necessário para a serialização/desserialização pelo Firebase
     }
-    public Region(double latitude, double longitude) {
+
+    public Region(String name, double latitude, double longitude) {
         // Obtém o timestamp atual
         long currentTimeStamp = System.currentTimeMillis();
         // Formata o timestamp para incluir dia, mês, hora, minuto e segundo
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
         String timestampString = sdf.format(new Date(currentTimeStamp));
         // Cria o nome da região com o ID e o timestamp
-        this.name = "Region_" + timestampString;
+        this.name = name + "_" + timestampString;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timestamp = System.nanoTime(); // Adiciona o timestamp
@@ -71,6 +74,10 @@ public class Region {
 
     public LatLng getLatLng() {
         return new LatLng(latitude, longitude);
+    }
+
+    public double distance(Region otherRegion) {
+        return DistanceCalculator.calculateDistance(this.latitude, this.longitude, otherRegion.getLatitude(), otherRegion.getLongitude());
     }
 
     @NonNull

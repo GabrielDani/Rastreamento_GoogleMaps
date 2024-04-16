@@ -13,7 +13,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import br.com.gabrieldani.maps.model.Region;
 import br.com.gabrieldani.maps.repository.FirebaseHelper;
 import br.com.gabrieldani.maps.services.LocationHelper;
 import br.com.gabrieldani.maps.services.RegionQueueManager;

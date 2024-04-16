@@ -1,21 +1,16 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.secrets)
-    alias(libs.plugins.googleServices)
+    alias(libs.plugins.androidLibrary)
 }
 
 android {
-    namespace = "br.com.gabrieldani.maps"
+    namespace = "br.com.gabrieldani.mylibrary"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "br.com.gabrieldani.maps"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -37,17 +32,6 @@ dependencies {
 
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation(libs.play.services.maps)
-    implementation(libs.play.services.location)
-    implementation(platform(libs.firebase.bom))
-    //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-database")
-    implementation(project(":MathLibrary"))
-    implementation(libs.gson)
-    implementation(project(":CryptoLibrary"))
-    implementation(project(":RegionLibrary"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

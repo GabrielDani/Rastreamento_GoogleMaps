@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -12,9 +14,10 @@ import java.util.concurrent.Semaphore;
 import br.com.gabrieldani.maps.model.Region;
 import br.com.gabrieldani.maps.repository.FirebaseHelper;
 import br.com.gabrieldani.maps.utils.XMLHelper;
+import br.com.gabrieldani.mylibrary.CryptoHelper;
 
 public class RegionQueueManager {
-    private final BlockingQueue<Region> regionQueue;
+    private final BlockingQueue<String> regionQueue;
     private final Semaphore semaphore;
     private final Context context;
     private final Handler handler;
@@ -32,7 +35,10 @@ public class RegionQueueManager {
     // Método para adicionar uma região à fila de forma assíncrona
     public void addRegionAsync(double latitude, double longitude) {
         // Cria uma nova região
-        Region region = new Region(latitude, longitude);
+        Region region = new Region("Region",latitude, longitude);
+        Gson gson = new Gson();
+        String regionJson = gson.toJson(region);
+        String encryptedJson = CryptoHelper.encrypt(regionJson);
 
         // Inicia uma nova thread para adicionar a região à fila
         new Thread(() -> {
@@ -40,11 +46,12 @@ public class RegionQueueManager {
                 // Adquire uma permissão do semáforo
                 semaphore.acquire();
                 // Adiciona a região à fila
-                regionQueue.put(region);
+                regionQueue.put(encryptedJson);
+                Log.d(TAG, "Nova Região Criptografada na fila: " + encryptedJson);
                 // Mensagem para usuário
-                String message = region.getName() + " adicionada à fila";
+                String message = "Região adicionada à fila";
                 // Exibir o Toast na UI thread usando um Handler
-                handler.post(() -> XMLHelper.showLongToast(context, message));
+                handler.post(() -> XMLHelper.showShortToast(context, message));
                 // Libera a permissão do semáforo
                 semaphore.release();
             } catch (InterruptedException e) {
@@ -60,13 +67,10 @@ public class RegionQueueManager {
             new Thread(() -> {
                 try {
                     semaphore.acquire(); // Obtém a permissão do semáforo
-                    Region lastRegion = regionQueue.peek(); // Obtém a última região da fila
+                    String lastRegion = regionQueue.peek(); // Obtém a última região da fila
                     assert lastRegion != null;
                     firebaseHelper.addRegion(lastRegion); // Adiciona a última região ao banco de dados
                     regionQueue.poll(); // Remove a região da fila após salvar no banco de dados
-                    // Mensagem para o usuário
-                    String message = lastRegion.getName() + " removida da fila";
-                    Log.d(TAG, message);
                     semaphore.release(); // Libera a permissão do semáforo
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -74,7 +78,7 @@ public class RegionQueueManager {
             }).start(); // Inicia a thread
         } else {
             // Se a fila estiver vazia, exibe uma mensagem ao usuário
-            String emptyQueueMessage = "A fila está vazia. Não há regiões para salvar no banco de dados.";
+            String emptyQueueMessage = "A fila está vazia.";
             // Exibe o Toast na UI thread usando um Handler
             handler.post(() -> XMLHelper.showLongToast(context, emptyQueueMessage));
             Log.d(TAG, emptyQueueMessage);

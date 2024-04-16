@@ -9,7 +9,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/CryptoLibrary" />
             <option value="$PROJECT_DIR$/MathLibrary" />
+            <option value="$PROJECT_DIR$/RegionLibrary" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

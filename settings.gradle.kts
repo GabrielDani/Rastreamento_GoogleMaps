@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "Maps"
 include(":app")
 include(":MathLibrary")
+include(":CryptoLibrary")
+include(":RegionLibrary")
