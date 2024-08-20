@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(platform(libs.firebase.bom))
+    implementation(libs.commons.math3)
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-database")
     implementation(project(":MathLibrary"))

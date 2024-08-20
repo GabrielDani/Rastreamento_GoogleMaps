@@ -13,10 +13,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import br.com.gabrieldani.locationutils.DistanceCalculator;
 import br.com.gabrieldani.maps.repository.FirebaseHelper;
+import br.com.gabrieldani.maps.services.DataReconciliation;
 import br.com.gabrieldani.maps.services.LocationHelper;
+import br.com.gabrieldani.maps.services.Reconciliation;
 import br.com.gabrieldani.maps.services.RegionQueueManager;
 import br.com.gabrieldani.maps.utils.PermissionManager;
+import br.com.gabrieldani.maps.utils.SensorDataSaver;
 import br.com.gabrieldani.maps.utils.XMLHelper;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationHelper.LocationResultListener {
@@ -24,6 +32,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView latitudeValueTextView, longitudeValueTextView;
     private GoogleMap googleMap;
     private RegionQueueManager regionQueueManager;
+    private static List<LatLng> flowMeterLocations;
+    private static final LatLng START_LOCATION = new LatLng(-21.22479,-43.786065);
+    private static final LatLng END_LOCATION = new LatLng(-21.2205383,-43.7411528);
+    private DataReconciliation dataReconciliation;
+    private SensorDataSaver sensorDataSaver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +58,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Inicializa o RegionQueueManager
         regionQueueManager = new RegionQueueManager(this, new FirebaseHelper(this));
+
+        // Lista dos sensores da ROTA 1
+        flowMeterLocations = new ArrayList<>();
+        flowMeterLocations.add(new LatLng(-21.22479,-43.786065));
+        flowMeterLocations.add(new LatLng(-21.2259629,-43.7799032));
+        flowMeterLocations.add(new LatLng(-21.2282689,-43.7723732));
+        flowMeterLocations.add(new LatLng(-21.2262945,-43.7634505));
+        flowMeterLocations.add(new LatLng(-21.222393,-43.7510799));
+        flowMeterLocations.add(new LatLng(-21.2205383,-43.7411528));
+//
+
+        // Lista dos sensores da ROTA 2
+//        flowMeterLocations = new ArrayList<>();
+//        flowMeterLocations.add(new LatLng(-21.22479,-43.786065));
+//        flowMeterLocations.add(new LatLng(-21.21863,-43.7792537));
+//        flowMeterLocations.add(new LatLng(-21.217466,-43.7706376));
+//        flowMeterLocations.add(new LatLng(-21.2141712,-43.7632797));
+//        flowMeterLocations.add(new LatLng(-21.2127733,-43.7494716));
+//        flowMeterLocations.add(new LatLng(-21.2205383,-43.7411528));
+
+
+        this.sensorDataSaver = new SensorDataSaver(this, "sensor_data.csv");
+        sensorDataSaver.readData();
+        dataReconciliation = new DataReconciliation(this, flowMeterLocations, sensorDataSaver);
 
         // Verifica e solicita permissão de localização ao iniciar a atividade, se necessário
         if (!PermissionManager.isLocationPermissionGranted(this)) {
@@ -68,10 +105,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (location != null) {
             // Atualiza os TextViews com a latitude e longitude
             updateTextViews(location.latitude, location.longitude);
+            dataReconciliation.updateLocation(location);
 
             // Adiciona um marcador no mapa com a nova localização
             if (googleMap != null) {
-                XMLHelper.addMarkerAndMoveCamera(googleMap, location, "Localização Atual");
+                XMLHelper.addMarkerAndMoveCamera(googleMap, location, START_LOCATION, END_LOCATION, flowMeterLocations);
             }
         } else {
             // Atualiza os TextViews com uma mensagem de erro
@@ -151,5 +189,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         regionQueueManager.saveToDB();
     }
 
+    public void reconciliation(View view) {
+        List<Map<String, String>> data = sensorDataSaver.readDataAsList();
+        if (data != null && !data.isEmpty()) {
+            Reconciliation reconciliation = new Reconciliation(data);
+        } else {
+            Log.d("Reconciliation", "Nenhum dado disponível para reconciliação.");
+        }
+    }
 }
-

@@ -4,4 +4,5 @@
     <string name="longitude">Longitude: </string>
     <string name="adicionar_regiao">Adicionar Região</string>
     <string name="gravar_no_bd">Gravar no BD</string>
+    <string name="reconciliar">Reconciliar</string>
 </resources>

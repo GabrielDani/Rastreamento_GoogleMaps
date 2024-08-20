@@ -2,10 +2,12 @@ package br.com.gabrieldani.mylibrary;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.util.Log;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class CryptoHelper {
@@ -16,6 +18,7 @@ public class CryptoHelper {
     // Método para criptografar uma string
     public static String encrypt(String value) {
         try {
+            Log.d("Crypto", "Inicio da Criptografia com o valor: " + value);
             // Cria uma instância do algoritmo de criptografia AES
             @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 
@@ -28,6 +31,7 @@ public class CryptoHelper {
             // Criptografa a string e a converte para Base64
             byte[] encryptedBytes = cipher.doFinal(value.getBytes());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.d("Crypto", "Final da Criptografia com o valor em bytes: " + Arrays.toString(encryptedBytes));
                 return Base64.getEncoder().encodeToString(encryptedBytes);
             }
         } catch (Exception e) {

@@ -35,8 +35,8 @@ public class LocationHelper {
         // Obtém uma instância do FusedLocationProviderClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         // Define os intervalos de tempo para as atualizações de localização
-        int LOCATION_INTERVAL = 2000;
-        int LOCATION_FASTEST_INTERVAL = 1000;
+        int LOCATION_INTERVAL = 200;
+        int LOCATION_FASTEST_INTERVAL = 100;
         // Cria um objeto LocationRequest com os critérios de atualização de localização
         mLocationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, LOCATION_INTERVAL)
                 .setWaitForAccurateLocation(false)
