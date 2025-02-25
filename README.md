@@ -38,7 +38,7 @@ O código é organizado em módulos principais:
 
 ### 2. Clonar o Repositório
 ```bash
-    https://github.com/GabrielDani/Rastreamento_GoogleMaps
+    git clone https://github.com/GabrielDani/Rastreamento_GoogleMaps
     cd Rastreamento_GoogleMaps
 ```
 
