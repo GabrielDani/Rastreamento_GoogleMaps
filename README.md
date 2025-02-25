@@ -38,8 +38,8 @@ O código é organizado em módulos principais:
 
 ### 2. Clonar o Repositório
 ```bash
-    git clone https://github.com/GabrielDaniAz/Avaliacao1_Avancada.git
-    cd Avaliacao1_Avancada
+    [git clone https://github.com/GabrielDaniAz/Avaliacao1_Avancada.git](https://github.com/GabrielDani/Rastreamento_GoogleMaps)
+    cd Rastreamento_GoogleMaps
 ```
 
 ### 3. Executar o Projeto
